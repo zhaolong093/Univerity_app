@@ -1,4 +1,4 @@
-from controllers.university_controller import  univerisity_menu
+from controllers.university_controller import  university_menu
 
 if __name__ == '__main__':
-    univerisity_menu()
+    university_menu()
