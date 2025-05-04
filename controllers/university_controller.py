@@ -11,5 +11,6 @@ def university_menu():
             case "s":
                 student_menu()
             case _:
-                print("University system: (A)dmin, (S)tudent, or X: ")
+                print("Please try again!: ")
+        userInput = input("University system: (A)dmin, (S)tudent, or X : ")
 
