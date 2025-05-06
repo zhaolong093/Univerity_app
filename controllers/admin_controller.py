@@ -39,7 +39,40 @@ def show_students():
             print(sys(f"[ {s.firstname} {s.lastname} :: {s.id} --> Email: {s.email} ]"))
 
 def rm_student():
-   pass
+    print(sys("===== Remove Student ======"))
+    if not db.students:
+        print(error("You have no student to remove"))
+        return
+
+    print(succ(f"Show {len(db.students)} Students"))
+    for s in db.students:
+        print(sys(f"[ Student ID::{s.id} --> {s.firstname} {s.lastname} ]"))
+
+    while True:
+        student_id = input(student("Remove Student by ID: "))
+
+        # validate the input by exactly 6 digit
+        if not student_id.isdigit() or len(student_id) !=6:
+            print(error("Invalid ID format! Please enter 6-digit number! "))
+            continue
+        #find student
+        student_to_remove = next((s for s in db.students if s.id == student_id), None)
+        #easy version here:
+        # for s in db.students:
+        #     if s.id == student_id:
+        #         student_to_remove = s
+
+        if student_to_remove:
+            confirm = input(error(f"Are you sure to remove {student_to_remove.id} --> {student_to_remove.firstname} {student_to_remove.lastname} (y/n)? ")).lower()
+            if confirm == 'y':
+                db.students.remove(student_to_remove)
+                db.save()
+                print(sys(f"Dropping Student - {student_to_remove.id}"))
+            else:
+                print(sys("Cancelled removal."))
+            break
+        else:
+            print(error("Student ID not found. Please check and try again! "))
 
 
 def admin_menu():
@@ -57,7 +90,7 @@ def admin_menu():
                 pass
             #r = remove student by id
             case "r":
-                pass
+                rm_student()
             #s = show all students
             case "s":
                show_students()
