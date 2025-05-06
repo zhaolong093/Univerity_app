@@ -4,6 +4,7 @@ from getpass import getpass
 from utils.colors import *
 from models.database import Database
 from models.student import Student
+from models.subject import Subject
 
 
 
@@ -30,9 +31,17 @@ def student_menu():
             case _:
                 print("Please try again!: ")
         student_input = input(student("Student System (l/r/x) : ")).lower()
+    print(sys("Logging out....."))
+
+def gen_uniq_student_id():
+    existing_ids = [s.id for s in db.students]
+    while True:
+        new_id = f"{random.randint(1, 999999):06}"
+        if new_id not in existing_ids:
+            return new_id
 
 def register():
-    print(" ===== Student Registration ===== ")
+    print(sys(" ===== Student Registration ===== "))
     #name + email
     while True:
         firstname = input(student("What is your first name? ")).lower()
@@ -58,14 +67,13 @@ def register():
         else:
             print(error("Invalid password format. Password must start with uppercase, have at least 5 letters and 3 digits."))
     # ID
-    new_id = f"{random.randint(1, 999999):06}"
-    student_id = new_id
+    student_id = gen_uniq_student_id()
 
     print(succ("\nRegistration completed!"))
-    print(succ(f"Student ID: {new_id}"))
+    print(succ(f"Student ID: {student_id}"))
     print(succ(f"Student Name: {firstname} {lastname}"))
     print(succ(f"Student Email: {email}"))
-    print(succ(f"{pwd}Password is set and saved securely!"))
+    print(succ(f"{pwd} Password is set and saved securely!"))
 
     new_student = Student(student_id, firstname, lastname, email,pwd)
     db.add_student(new_student)
@@ -73,14 +81,14 @@ def register():
     return
 
 def login():
-    print(" ===== Student Login ===== ")
+    print(sys(" ===== Student Login ===== "))
 
     email = input(student("Enter your student email: "))
     student_obj = db.get_student_by_email(email) #Check email in DB
 
     if student_obj is None:
         print(error("Email not found. Please register or check your email."))
-        return
+
 
     pwd  = input(student("Enter your password: "))
 
@@ -91,35 +99,83 @@ def login():
     else:
         print(error("Incorrect email or password. Please try again! "))
 
-# =========== Student Menu ==========
+# =========== Student Function ==========
 def student_function(student_obj):
-    print(student("\n===== Student Menu ====="))
+    print(sys("\n===== Student Menu ====="))
     student_input = input(student("Student Course Menu (c/e/r/s/x): ")).lower()
     while (student_input != "x"):
         match student_input:
             case "c":
-                while True:
-                    new_pwd = input(student("Enter new password: "))
-                    confirm_pwd = input(student("Confirm Password: "))
-                    if new_pwd == confirm_pwd:
-                        if re.match(PASSWORD_PATTERN, new_pwd):
-                            student_obj.pwd = new_pwd
-                            db.save()
-                            print(succ("Password changed successfully! "))
-                            break
-                        else:
-                            print(error("Invalid password format. Password must start with uppercase, have at least 5 letters and 3 digits."))
-                    else:
-                        print("The password is not match! ")
+                change_pwd(student_obj)
             case "e":
-                pass
+                subject_enrol(student_obj)
             case "r":
-                pass
+                sub_remove(student_obj)
             case "s":
-                pass
+                show_sub(student_obj)
             case _:
                 print(student("Please try again: "))
         student_input = input(student("Student Course Menu (c/e/r/s/x): ")).lower()
 
-    print(start("Logging out from Student Menu..."))
+    print(sys("Logging out from Student Menu..."))
+
+def subject_enrol(student_obj):
+    if len(student_obj.subject) >= 4:
+        print(error("Students are allowed to enrol in 4 subjects only! "))
+        return
+
+    new_subject = Subject()
+    student_obj.subject.append(new_subject)
+    db.save()
+
+    print(sys(f"\nEnrolling in Subject {new_subject.id}"))
+    print(sys(f"You are now enrolled in {len(student_obj.subject)} out of 4 subjects"))
+
+def show_sub(student_obj):
+    print(sys("===== Your Enrolled Subject ======"))
+    if not student_obj.subject:
+        print(error("Showing 0 subjects"))
+
+    print(sys(f"Show {len(student_obj.subject)} subjects"))
+    for s in student_obj.subject:
+        print(sys(f"[ Subject::{s.id} -- mark = {s.mark} -- grade = {s.grade} ]"))
+
+def sub_remove(student_obj):
+    print(sys("===== Remove Subject ======"))
+    if not student_obj.subject:
+        print(error("You have no subjects to remove"))
+
+    print(succ(f"Show {len(student_obj.subject)} subjects"))
+    for s in student_obj.subject:
+        print(sys(f"[ Subject::{s.id} -- mark = {s.mark} -- grade = {s.grade} ]"))
+
+    subject_id = input(student("Remove Subject by ID: "))
+    subject_to_remove = None
+    for s in student_obj.subject:
+        if s.id == subject_id:
+            subject_to_remove = s
+
+    if subject_to_remove:
+        student_obj.subject.remove(subject_to_remove)
+        db.save()
+        print(sys(f"Dropping Subject - {subject_to_remove.id}"))
+        print(sys(f"You are now enrolled in {len(student_obj.subject)} out of 4 subjects"))
+    else:
+        print(error("Subject ID not found. Please check and try again! "))
+
+def change_pwd(student_obj):
+    while True:
+        new_pwd = input(student("Enter new password: "))
+        confirm_pwd = input(student("Confirm Password: "))
+        if new_pwd == confirm_pwd:
+            if re.match(PASSWORD_PATTERN, new_pwd):
+                student_obj.pwd = new_pwd
+                db.save()
+                print(succ("Password changed successfully! "))
+                break
+            else:
+                print(error(
+                    "Invalid password format. Password must start with uppercase, have at least 5 letters and 3 digits."))
+        else:
+            print("The password is not match! ")
 

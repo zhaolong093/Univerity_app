@@ -1,8 +1,8 @@
 import random
 
 class Subject:
-    def __init__(self):
-        self.id = f"{random.randint(1,999):03}"
+    def __init__(self, id = None):
+        self.id = id if id else f"{random.randint(1,999):03}"
         self.mark = random.randint(25,100)
         self.grade = self.get_grade()
 
