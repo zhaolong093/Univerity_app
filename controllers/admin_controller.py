@@ -74,6 +74,29 @@ def rm_student():
         else:
             print(error("Student ID not found. Please check and try again! "))
 
+def partition_student():
+    print(sys("===== PASS / FAIL Partition  ======"))
+    pass_student = []
+    fail_student = []
+
+    for student in db.students:
+        student.update_average()
+        if student.is_pass():
+            pass_student.append(student)
+        else:
+            fail_student.append(student)
+
+    if fail_student:
+        for s in fail_student:
+            print(sys(f"FAIL --> [ {s.firstname} {s.lastname} :: {s.id} --> GRADE : {s.get_average_grade()} - MARK: {s.average_mark:.2f} ]"))
+    else:
+        print(sys("FAIL --> []"))
+
+    if pass_student:
+        for s in pass_student:
+            print(sys(f"PASS --> [ {s.firstname} {s.lastname} :: {s.id} --> GRADE : {s.get_average_grade()} - MARK: {s.average_mark:.2f} ]"))
+    else:
+        print(sys("PASS --> []"))
 
 def admin_menu():
     admin_input = input(admin("Admin System (c/g/p/r/s/x) :  " )).lower()
@@ -87,7 +110,7 @@ def admin_menu():
                 group_grade()
             #p = partition students: pass or fail categories
             case "p":
-                pass
+                partition_student()
             #r = remove student by id
             case "r":
                 rm_student()
