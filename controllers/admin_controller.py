@@ -6,12 +6,22 @@ db = Database()
 
 def clear_db():
     print(sys("Clearing students database..."))
-    CONFRIM = input(error("Are you sure you want to clear the database? (Y)es / (N)o")).lower()
-    if CONFRIM == 'y':
-        db.clear()
-        print(sys("Students data cleared! "))
-    else:
-        return
+    while True:
+        CONFIRM = input(error("Are you sure you want to clear the database? (Y)es / (N)o: ")).lower()
+        if CONFIRM == 'y':
+            try:
+                db.clear()
+                print(sys("Students data cleared! "))
+            except Exception as e:
+                print(error(f"Failed to clear students data. Errors: {str(e)}"))
+        elif CONFIRM == 'n':
+            print(sys("Cancelled. Database was not cleared."))
+            break
+        else:
+            print(error("Invalid option. Please enter Y or N."))
+
+
+
 
 def group_grade():
     grade_order = ["HD", "D", "C", "P", "F"]

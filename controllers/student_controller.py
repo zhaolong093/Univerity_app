@@ -83,23 +83,28 @@ def register():
 def login():
     print(sys(" ===== Student Login ===== "))
     while True:
-        email = input(student("Enter your student email: "))
-        pwd = input(student("Enter your password: "))
+        try:
+            email = input(student("Enter your student email: "))
+            pwd = input(student("Enter your password: "))
 
-        if not re.match(EMAIL_PATTERN, email):
-            print(error("Invalid email or password format."))
-            continue
+            if not re.match(EMAIL_PATTERN, email):
+                print(error("Invalid email or password format."))
+                continue
 
-        student_obj = db.get_student_by_email(email) #Check email in DB
+            student_obj = db.get_student_by_email(email) #Check email in DB
 
-        if student_obj is None or student_obj.pwd != pwd:
-            print(error("Incorrect email or password format. "))
-            continue
+            if student_obj is None or student_obj.pwd != pwd:
+                print(error("Incorrect email or password format. "))
+                continue
 
-        print(succ(f"\nWelcome {student_obj.firstname.capitalize()} {student_obj.lastname.capitalize()}!"))
-        print(succ("You have successfully logged in! "))
-        student_function(student_obj)
-        return
+            print(succ(f"\nWelcome {student_obj.firstname.capitalize()} {student_obj.lastname.capitalize()}!"))
+            print(succ("You have successfully logged in! "))
+            student_function(student_obj)
+            return
+        except ValueError as ve:
+            print(error(str(ve)))
+        except Exception as e:
+            print(error("Something went wrong during login, Please try again! "))
 
 
 # =========== Student Function ==========
@@ -179,8 +184,7 @@ def change_pwd(student_obj):
                 print(succ("Password changed successfully! "))
                 break
             else:
-                print(error(
-                    "Invalid password format. Password must start with uppercase, have at least 5 letters and 3 digits."))
+                print(error("Invalid password format. Password must start with uppercase, have at least 5 letters and 3 digits."))
         else:
             print(error("The password is not match! "))
 
