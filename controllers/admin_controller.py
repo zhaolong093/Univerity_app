@@ -13,6 +13,35 @@ def clear_db():
     else:
         return
 
+def group_grade():
+    grade_order = ["HD", "D", "C", "P", "F"]
+    grade_groups = {grade: [] for grade in grade_order}
+    for student in db.students:
+        student.update_average()
+        student_grade = student.get_average_grade()
+        grade_groups[student_grade].append(student)
+
+    for grade in grade_order:
+        students_in_grade = grade_groups[grade]
+        if students_in_grade:
+            for student in students_in_grade:
+                print(
+                    sys(f"{grade} --> [{student.firstname} {student.lastname} :: {student.id} --> GRADE: {grade} - MARK: {student.average_mark:.2f} ]"))
+        else:
+            print(sys(f"{grade} --> "))
+def show_students():
+    if not db.students:
+        print(error("No students found in the database! "))
+    else:
+        print(succ(f"Showing {len(db.students)} students: "))
+
+        for s in db.students:
+            print(sys(f"[ {s.firstname} {s.lastname} :: {s.id} --> Email: {s.email} ]"))
+
+def rm_student():
+   pass
+
+
 def admin_menu():
     admin_input = input(admin("Admin System (c/g/p/r/s/x) :  " )).lower()
     while (admin_input != "x"):
@@ -22,22 +51,7 @@ def admin_menu():
                 clear_db()
             #G = group students by grades
             case "g":
-                # Define grades in order (High to Low)
-                grade_order = ["HD", "D", "C", "P", "F"]
-                for grade in grade_order:
-                    has_student = False  # check if there is student for this grade
-
-                    for student in db.students:
-                        student.update_average()  # update student's average before check
-                        student_grade = student.get_student_grade(student.average_mark)
-
-                        if student_grade == grade:
-                            has_student = True
-                            print(
-                                sys(f"{grade} --> [ {student.firstname.capitalize()} {student.lastname.capitalize()} :: {student.id} --> Email: {student.email} --> AVG MARK: {student.average_mark:.2f} ]"))
-
-                    if not has_student:
-                        print(sys(f"{grade} -->"))
+                group_grade()
             #p = partition students: pass or fail categories
             case "p":
                 pass
@@ -46,13 +60,7 @@ def admin_menu():
                 pass
             #s = show all students
             case "s":
-                if not db.students:
-                    print(error("No students found in the database! "))
-                else:
-                    print(succ(f"Showing {len(db.students)} students: "))
-
-                    for s in db.students:
-                        print(sys(f"[ {s.firstname} {s.lastname} :: {s.id} --> Email: {s.email} ]"))
+               show_students()
             case _:
                 print(admin("Please try again! "))
         admin_input = input(admin("Admin System (c/g/p/r/s/x) :  ")).lower()

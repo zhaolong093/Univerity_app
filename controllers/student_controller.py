@@ -126,6 +126,7 @@ def subject_enrol(student_obj):
 
     new_subject = Subject()
     student_obj.subject.append(new_subject)
+    student_obj.update_average()
     db.save()
 
     print(sys(f"\nEnrolling in Subject {new_subject.id}"))
@@ -157,6 +158,7 @@ def sub_remove(student_obj):
 
     if subject_to_remove:
         student_obj.subject.remove(subject_to_remove)
+        student_obj.update_average()
         db.save()
         print(sys(f"Dropping Subject - {subject_to_remove.id}"))
         print(sys(f"You are now enrolled in {len(student_obj.subject)} out of 4 subjects"))
