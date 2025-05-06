@@ -82,22 +82,25 @@ def register():
 
 def login():
     print(sys(" ===== Student Login ===== "))
+    while True:
+        email = input(student("Enter your student email: "))
+        pwd = input(student("Enter your password: "))
 
-    email = input(student("Enter your student email: "))
-    student_obj = db.get_student_by_email(email) #Check email in DB
+        if not re.match(EMAIL_PATTERN, email):
+            print(error("Invalid email or password format."))
+            continue
 
-    if student_obj is None:
-        print(error("Email not found. Please register or check your email."))
+        student_obj = db.get_student_by_email(email) #Check email in DB
 
+        if student_obj is None or student_obj.pwd != pwd:
+            print(error("Incorrect email or password format. "))
+            continue
 
-    pwd  = input(student("Enter your password: "))
-
-    if student_obj.pwd == pwd:
         print(succ(f"\nWelcome {student_obj.firstname.capitalize()} {student_obj.lastname.capitalize()}!"))
         print(succ("You have successfully logged in! "))
         student_function(student_obj)
-    else:
-        print(error("Incorrect email or password. Please try again! "))
+        return
+
 
 # =========== Student Function ==========
 def student_function(student_obj):
@@ -179,5 +182,5 @@ def change_pwd(student_obj):
                 print(error(
                     "Invalid password format. Password must start with uppercase, have at least 5 letters and 3 digits."))
         else:
-            print("The password is not match! ")
+            print(error("The password is not match! "))
 

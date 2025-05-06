@@ -1,13 +1,13 @@
 from utils.colors import *
 from models.database import Database
-from models.student import *
+
 db = Database()
 
 
 def clear_db():
     print(sys("Clearing students database..."))
     CONFRIM = input(error("Are you sure you want to clear the database? (Y)es / (N)o")).lower()
-    if CONFRIM == 'Y':
+    if CONFRIM == 'y':
         db.clear()
         print(sys("Students data cleared! "))
     else:
@@ -16,10 +16,12 @@ def clear_db():
 def group_grade():
     grade_order = ["HD", "D", "C", "P", "F"]
     grade_groups = {grade: [] for grade in grade_order}
-    for student in db.students:
+    students = db.load()
+    for student in students:
         student.update_average()
         student_grade = student.get_average_grade()
         grade_groups[student_grade].append(student)
+
 
     for grade in grade_order:
         students_in_grade = grade_groups[grade]
