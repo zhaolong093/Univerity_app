@@ -21,8 +21,6 @@ def clear_db():
             print(error("Invalid option. Please enter Y or N."))
 
 
-
-
 def group_grade():
     grade_order = ["HD", "D", "C", "P", "F"]
     grade_groups = {grade: [] for grade in grade_order}
@@ -113,23 +111,25 @@ def partition_student():
 def admin_menu():
     admin_input = input(admin("Admin System (c/g/p/r/s/x) :  " )).lower()
     while (admin_input != "x"):
-        match admin_input:
-            #C = Clear database on student.data
-            case "c":
-                clear_db()
-            #G = group students by grades
-            case "g":
-                group_grade()
-            #p = partition students: pass or fail categories
-            case "p":
-                partition_student()
-            #r = remove student by id
-            case "r":
-                rm_student()
-            #s = show all students
-            case "s":
-               show_students()
-            case _:
-                print(admin("Please try again! "))
-        admin_input = input(admin("Admin System (c/g/p/r/s/x) :  ")).lower()
-
+        try:
+            match admin_input:
+                #C = Clear database on student.data
+                case "c":
+                    clear_db()
+                #G = group students by grades
+                case "g":
+                    group_grade()
+                #p = partition students: pass or fail categories
+                case "p":
+                    partition_student()
+                #r = remove student by id
+                case "r":
+                    rm_student()
+                #s = show all students
+                case "s":
+                   show_students()
+                case _:
+                    print(admin("Please try again! "))
+            admin_input = input(admin("Admin System (c/g/p/r/s/x) :  ")).lower()
+        except Exception as e:
+            print(error(f"An unexpected error occurred: {str(e)}"))

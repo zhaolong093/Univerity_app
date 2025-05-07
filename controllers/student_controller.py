@@ -84,7 +84,11 @@ def login():
     print(sys(" ===== Student Login ===== "))
     while True:
         try:
+
             email = input(student("Enter your student email: "))
+            if email == 'x':
+                print(sys("Cancelled login. Returning to student Menu..."))
+                return
             pwd = input(student("Enter your password: "))
 
             if not re.match(EMAIL_PATTERN, email):
