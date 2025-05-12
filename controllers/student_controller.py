@@ -29,7 +29,7 @@ def student_menu():
             case "r":
                 register()
             case _:
-                print("Please try again!: ")
+                print("Please try again! ")
         student_input = input(student("Student System (l/r/x) : ")).lower()
     print(sys("Logging out....."))
 
@@ -47,7 +47,7 @@ def register():
         firstname = input(student("What is your first name? ")).lower()
         lastname = input(student("What is your last name? ")).lower()
         email = f"{firstname}.{lastname}@university.com"
-
+        db.load()
         if db.get_student_by_email(email):
             print(error("Email is already exists. Please try again with different name"))
             continue
@@ -77,7 +77,6 @@ def register():
 
     new_student = Student(student_id, firstname, lastname, email,pwd)
     db.add_student(new_student)
-
     return
 
 def login():

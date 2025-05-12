@@ -139,7 +139,7 @@ class SubjectFrame(tk.LabelFrame):
             for s in student.subject:
                 tk.Label(self, text=f"Subject::{s.id} -- mark: {s.mark} -- grade: {s.grade}").pack()
 
-        tk.Button(self, text="Back to Enrolment", command= self.back_to_enrolment).pack(pady=10)
+        tk.Button(self, text="Back to Enrolment", command= lambda: self.back_to_enrolment).pack(pady=10)
 
     def back_to_enrolment(self):
         self.master.show_enrolment(self.student)

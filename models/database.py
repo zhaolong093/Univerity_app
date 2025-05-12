@@ -21,8 +21,10 @@ class Database:
         self.save()
 
     def get_student_by_email(self, email):
+        self.students = self.load()
         return next((s for s in self.students if s.email == email), None)
 
     def clear(self):
         self.students=[]
         self.save()
+        self.load()

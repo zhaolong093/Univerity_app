@@ -14,6 +14,7 @@ def clear_db():
                 print(sys("Students data cleared! "))
             except Exception as e:
                 print(error(f"Failed to clear students data. Errors: {str(e)}"))
+            return
         elif CONFIRM == 'n':
             print(sys("Cancelled. Database was not cleared."))
             break
@@ -40,26 +41,29 @@ def group_grade():
         else:
             print(sys(f"{grade} --> "))
 def show_students():
-    if not db.students:
+    students = db.load()
+    if not students:
         print(error("No students found in the database! "))
     else:
         print(succ(f"Showing {len(db.students)} students: "))
-
-        for s in db.students:
+        for s in students:
             print(sys(f"[ {s.firstname} {s.lastname} :: {s.id} --> Email: {s.email} ]"))
 
 def rm_student():
     print(sys("===== Remove Student ======"))
-    if not db.students:
+    students = db.load()
+    if not students:
         print(error("You have no student to remove"))
         return
 
     print(succ(f"Show {len(db.students)} Students"))
-    for s in db.students:
+    for s in students:
         print(sys(f"[ Student ID::{s.id} --> {s.firstname} {s.lastname} ]"))
 
     while True:
         student_id = input(student("Remove Student by ID: "))
+        if student_id == 'x':
+            return
 
         # validate the input by exactly 6 digit
         if not student_id.isdigit() or len(student_id) !=6:
@@ -86,10 +90,11 @@ def rm_student():
 
 def partition_student():
     print(sys("===== PASS / FAIL Partition  ======"))
+    students = db.load()
     pass_student = []
     fail_student = []
 
-    for student in db.students:
+    for student in students:
         student.update_average()
         if student.is_pass():
             pass_student.append(student)
