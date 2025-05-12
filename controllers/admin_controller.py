@@ -34,6 +34,7 @@ def group_grade():
 
     for grade in grade_order:
         students_in_grade = grade_groups[grade]
+        print("Grade Grouping")
         if students_in_grade:
             for student in students_in_grade:
                 print(
@@ -43,9 +44,10 @@ def group_grade():
 def show_students():
     students = db.load()
     if not students:
-        print(error("No students found in the database! "))
+        print(succ(f"Students List: {len(db.students)} "))
+        print(error("< Nothing to Display >"))
     else:
-        print(succ(f"Showing {len(db.students)} students: "))
+        print(succ(f"Students List: {len(db.students)} "))
         for s in students:
             print(sys(f"[ {s.firstname} {s.lastname} :: {s.id} --> Email: {s.email} ]"))
 
@@ -89,7 +91,7 @@ def rm_student():
             print(error("Student ID not found. Please check and try again! "))
 
 def partition_student():
-    print(sys("===== PASS / FAIL Partition  ======"))
+    print(sys("PASS / FAIL Partition"))
     students = db.load()
     pass_student = []
     fail_student = []
@@ -102,12 +104,14 @@ def partition_student():
             fail_student.append(student)
 
     if fail_student:
+        # print(admin(fail_student.append(student)))
         for s in fail_student:
             print(sys(f"FAIL --> [ {s.firstname} {s.lastname} :: {s.id} --> GRADE : {s.get_average_grade()} - MARK: {s.average_mark:.2f} ]"))
     else:
         print(sys("FAIL --> []"))
 
     if pass_student:
+        # print(admin(pass_student.append(student)))
         for s in pass_student:
             print(sys(f"PASS --> [ {s.firstname} {s.lastname} :: {s.id} --> GRADE : {s.get_average_grade()} - MARK: {s.average_mark:.2f} ]"))
     else:

@@ -14,4 +14,4 @@ def university_menu():
             case _:
                 print("Please try again!: ")
         userInput = input("University system: (A)dmin, (S)tudent, or X : ")
-
+    print(sys("Thank you"))

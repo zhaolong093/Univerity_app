@@ -10,8 +10,13 @@ from models.subject import Subject
 
 #use r'' = for writing regex
 # $ = mean end of string
+# ^ = start
+# [a-z] = any alpha from a to z // the same thing as capital //  [a-zA-Z] = mix with lower and capital
+# "\" = to write sth like "."
+# \d = num
 EMAIL_PATTERN = r'^[a-z]+\.[a-z]+@university\.com$'
 PASSWORD_PATTERN = r'^[A-Z][a-zA-Z]{5,}\d{3,}$'
+# H + elloo + 123
 db = Database()
 
 
@@ -19,7 +24,7 @@ db = Database()
 
 # =========== Student Menu ==========
 def student_menu():
-    student_input = input(student("Student System (l/r/x) : ")).lower()
+    student_input = input(student("\tStudent System (l/r/x) : ")).lower()
     while (student_input != "x"):
         match student_input:
             #l = login
@@ -41,7 +46,7 @@ def gen_uniq_student_id():
             return new_id
 
 def register():
-    print(sys(" ===== Student Registration ===== "))
+    print(sys("Student Sign Up"))
     #name + email
     while True:
         firstname = input(student("What is your first name? ")).lower()
@@ -56,7 +61,7 @@ def register():
             break
         else:
             print(error("Invalid email generated. Use only letters for name (no space or numbers)"))
-    print(succ(f"Your student email is: {firstname}.{lastname}@university.com"))
+    # print(succ(f"Your student email is: {firstname}.{lastname}@university.com"))
 
     #Password
     while True:
@@ -69,18 +74,20 @@ def register():
     # ID
     student_id = gen_uniq_student_id()
 
-    print(succ("\nRegistration completed!"))
-    print(succ(f"Student ID: {student_id}"))
-    print(succ(f"Student Name: {firstname} {lastname}"))
-    print(succ(f"Student Email: {email}"))
-    print(succ(f"{pwd} Password is set and saved securely!"))
+
+    print(succ(f"\nEnrolling Student {firstname} {lastname}"))
+    # print(succ("\nRegistration completed!"))
+    # print(succ(f"Student ID: {student_id}"))
+    # print(succ(f"Student Name: {firstname} {lastname}"))
+    # print(succ(f"Student Email: {email}"))
+    # print(succ(f"{pwd} Password is set and saved securely!"))
 
     new_student = Student(student_id, firstname, lastname, email,pwd)
     db.add_student(new_student)
     return
 
 def login():
-    print(sys(" ===== Student Login ===== "))
+    print(sys("Student Sign In"))
     while True:
         try:
 
@@ -88,7 +95,7 @@ def login():
             if email == 'x':
                 print(sys("Cancelled login. Returning to student Menu..."))
                 return
-            pwd = input(student("Enter your password: "))
+            pwd = input(student("Enter your password: ")) #getpasss
 
             if not re.match(EMAIL_PATTERN, email):
                 print(error("Invalid email or password format."))
@@ -140,17 +147,17 @@ def subject_enrol(student_obj):
     student_obj.update_average()
     db.save()
 
-    print(sys(f"\nEnrolling in Subject {new_subject.id}"))
+    print(sys(f"Enrolling in Subject-{new_subject.id}"))
     print(sys(f"You are now enrolled in {len(student_obj.subject)} out of 4 subjects"))
 
 def show_sub(student_obj):
-    print(sys("===== Your Enrolled Subject ======"))
+    # print(sys("===== Your Enrolled Subject ======"))
     if not student_obj.subject:
         print(error("Showing 0 subjects"))
 
     print(sys(f"Show {len(student_obj.subject)} subjects"))
     for s in student_obj.subject:
-        print(sys(f"[ Subject::{s.id} -- mark = {s.mark} -- grade = {s.grade} ]"))
+        print(sys(f"[ Subject::{s.id} -- mark = {s.mark} -- grade = {s.grade:<2} ]"))
 
 def sub_remove(student_obj):
     print(sys("===== Remove Subject ======"))

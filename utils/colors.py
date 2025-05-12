@@ -11,7 +11,9 @@ def succ(text):
 
 def error(text):
     return Fore.RED + text
+
 def sys(text):
     return Fore.YELLOW + text
+
 def warn(text):
     return Fore.LIGHTMAGENTA_EX + text
