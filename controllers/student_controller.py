@@ -162,6 +162,8 @@ def student_function(student_obj):
     print(sys("\t\t===== Student Menu ====="))
     student_input = input(student("\t\tStudent Course Menu (c/e/r/s/x): ")).lower()
     while (student_input != "x"):
+        db.students = db.load()  # refresh in-memory list
+        student_obj = db.get_student_by_email(student_obj.email)  # refresh object
         match student_input:
             case "c":
                 change_pwd(student_obj)
@@ -224,6 +226,7 @@ def sub_remove(student_obj):
         print(error("\t\tSubject ID not found. Please check and try again! "))
 
 def change_pwd(student_obj):
+    print(sys("\t\tUpdating Password"))
     while True:
         new_pwd = input(student("\t\tEnter new password: "))
         confirm_pwd = input(student("\t\tConfirm Password: "))
