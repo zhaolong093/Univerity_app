@@ -19,9 +19,6 @@ PASSWORD_PATTERN = r'^[A-Z][a-zA-Z]{5,}\d{3,}$'
 # H + elloo + 123
 db = Database()
 
-
-
-
 # =========== Student Menu ==========
 def student_menu():
     student_input = input(student("\tStudent System (l/r/x) : ")).lower()
@@ -34,9 +31,9 @@ def student_menu():
             case "r":
                 register()
             case _:
-                print("Please try again! ")
-        student_input = input(student("Student System (l/r/x) : ")).lower()
-    print(sys("Logging out....."))
+                print("\tPlease try again! ")
+        student_input = input(student("\tStudent System (l/r/x) : ")).lower()
+    print(sys("\tLogging out....."))
 
 def gen_uniq_student_id():
     existing_ids = [s.id for s in db.students]
@@ -45,82 +42,125 @@ def gen_uniq_student_id():
         if new_id not in existing_ids:
             return new_id
 
+#new version
 def register():
-    print(sys("Student Sign Up"))
-    #name + email
+    print(sys("\tStudent Sign Up"))
     while True:
-        firstname = input(student("What is your first name? ")).lower()
-        lastname = input(student("What is your last name? ")).lower()
-        email = f"{firstname}.{lastname}@university.com"
-        db.load()
-        if db.get_student_by_email(email):
-            print(error("Email is already exists. Please try again with different name"))
-            continue
-        #validate email
-        if re.match(EMAIL_PATTERN, email):
-            break
-        else:
-            print(error("Invalid email generated. Use only letters for name (no space or numbers)"))
-    # print(succ(f"Your student email is: {firstname}.{lastname}@university.com"))
+        email = input(student("\tEmail: ")).lower()
+        pwd = input(student("\tPassword: "))
 
-    #Password
-    while True:
-        # pwd = getpass(student("New password (Hidden): "))
-        pwd = input(student("New password: "))
-        if re.match(PASSWORD_PATTERN, pwd):
-            break
+        #validate
+        if re.match(EMAIL_PATTERN,email) and re.match(PASSWORD_PATTERN, pwd):
+            print(succ("\tEmail and Password formats acceptable"))
         else:
-            print(error("Invalid password format. Password must start with uppercase, have at least 5 letters and 3 digits."))
-    # ID
+            print(error("\tIncorrect email or password format"))
+            continue
+
+
+        try:
+            firstname, lastname = email.split("@")[0].split(".")
+        except ValueError:
+            print(error("\tEmail format must be firstname.lastname@university.com"))
+            continue
+
+        if db.get_student_by_email(email):
+            print(error(f"\tStudent {firstname.capitalize()} {lastname.capitalize()} already exists."))
+            return
+        break
+
+    #Name input
+    while True:
+        name = input(student("\tName: "))
+        try:
+            firstname,lastname = name.strip().split(" ")
+            break
+        except ValueError:
+            print(error("\tPlease input both firstname and lastname (e.g John Smith)."))
+        # print(student(f"\tName: {firstname.capitalize()} {lastname.capitalize()}"))
     student_id = gen_uniq_student_id()
 
-
-    print(succ(f"\nEnrolling Student {firstname} {lastname}"))
-    # print(succ("\nRegistration completed!"))
-    # print(succ(f"Student ID: {student_id}"))
-    # print(succ(f"Student Name: {firstname} {lastname}"))
-    # print(succ(f"Student Email: {email}"))
-    # print(succ(f"{pwd} Password is set and saved securely!"))
-
-    new_student = Student(student_id, firstname, lastname, email,pwd)
+    print(succ(f"\tEnrolling Student {firstname.capitalize()} {lastname.capitalize()}"))
+    new_student = Student(student_id, firstname, lastname, email, pwd)
     db.add_student(new_student)
     return
 
+# old version
+# def register():
+#     print(sys("\tStudent Sign Up"))
+#     #name + email
+#     while True:
+#         firstname = input(student("\tWhat is your first name? ")).lower()
+#         lastname = input(student("\tWhat is your last name? ")).lower()
+#         email = f"{firstname}.{lastname}@university.com"
+#         if db.get_student_by_email(email):
+#             print(error("\tEmail is already exists. Please try again with different name"))
+#             continue
+#         #validate email
+#         if re.match(EMAIL_PATTERN, email):
+#             break
+#         else:
+#             print(error("\tInvalid email generated. Use only letters for name (no space or numbers)"))
+#     # print(succ(f"Your student email is: {firstname}.{lastname}@university.com"))
+#
+#     #Password
+#     while True:
+#         # pwd = getpass(student("New password (Hidden): "))
+#         pwd = input(student("\tNew password: "))
+#         if re.match(PASSWORD_PATTERN, pwd):
+#             break
+#         else:
+#             print(error("\tInvalid password format. Password must start with uppercase, have at least 5 letters and 3 digits."))
+#     # ID
+#     student_id = gen_uniq_student_id()
+#
+#
+#     print(succ(f"\tEnrolling Student {firstname} {lastname}"))
+#     # print(succ("\nRegistration completed!"))
+#     # print(succ(f"Student ID: {student_id}"))
+#     # print(succ(f"Student Name: {firstname} {lastname}"))
+#     # print(succ(f"Student Email: {email}"))
+#     # print(succ(f"{pwd} Password is set and saved securely!"))
+#
+#     new_student = Student(student_id, firstname, lastname, email,pwd)
+#     db.add_student(new_student)
+#     return
+
 def login():
-    print(sys("Student Sign In"))
+    print(sys("\tStudent Sign In"))
     while True:
         try:
 
-            email = input(student("Enter your student email: "))
+            email = input(student("\tEnter your student email: "))
             if email == 'x':
-                print(sys("Cancelled login. Returning to student Menu..."))
+                print(sys("\tCancelled login. Returning to student Menu..."))
                 return
-            pwd = input(student("Enter your password: ")) #getpasss
+            pwd = input(student("\tEnter your password: ")) #getpasss
 
             if not re.match(EMAIL_PATTERN, email):
-                print(error("Invalid email or password format."))
+                print(error("\tInvalid email or password format."))
                 continue
 
             student_obj = db.get_student_by_email(email) #Check email in DB
 
             if student_obj is None or student_obj.pwd != pwd:
-                print(error("Incorrect email or password format. "))
+                print(error("\tIncorrect email or password format. "))
                 continue
 
-            print(succ(f"\nWelcome {student_obj.firstname.capitalize()} {student_obj.lastname.capitalize()}!"))
-            print(succ("You have successfully logged in! "))
+            print(succ("\tEmail and Password formats Acceptable! "))
+            # print(succ(f"\nWelcome {student_obj.firstname.capitalize()} {student_obj.lastname.capitalize()}!"))
+            # print(succ("You have successfully logged in! "))
             student_function(student_obj)
             return
         except ValueError as ve:
             print(error(str(ve)))
         except Exception as e:
-            print(error("Something went wrong during login, Please try again! "))
+            print(error("\tSomething went wrong during login, Please try again! "))
 
 
 # =========== Student Function ==========
 def student_function(student_obj):
-    print(sys("\n===== Student Menu ====="))
-    student_input = input(student("Student Course Menu (c/e/r/s/x): ")).lower()
+    print(sys("\t\t===== Student Menu ====="))
+    student_input = input(student("\t\tStudent Course Menu (c/e/r/s/x): ")).lower()
     while (student_input != "x"):
         match student_input:
             case "c":
@@ -132,14 +172,14 @@ def student_function(student_obj):
             case "s":
                 show_sub(student_obj)
             case _:
-                print(student("Please try again: "))
-        student_input = input(student("Student Course Menu (c/e/r/s/x): ")).lower()
+                print(student("\t\tPlease try again: "))
+        student_input = input(student("\t\tStudent Course Menu (c/e/r/s/x): ")).lower()
 
-    print(sys("Logging out from Student Menu..."))
+    print(sys("\t\tLogging out from Student Menu..."))
 
 def subject_enrol(student_obj):
     if len(student_obj.subject) >= 4:
-        print(error("Students are allowed to enrol in 4 subjects only! "))
+        print(error("\t\tStudents are allowed to enrol in 4 subjects only! "))
         return
 
     new_subject = Subject()
@@ -147,28 +187,28 @@ def subject_enrol(student_obj):
     student_obj.update_average()
     db.save()
 
-    print(sys(f"Enrolling in Subject-{new_subject.id}"))
-    print(sys(f"You are now enrolled in {len(student_obj.subject)} out of 4 subjects"))
+    print(sys(f"\t\tEnrolling in Subject-{new_subject.id}"))
+    print(sys(f"\t\tYou are now enrolled in {len(student_obj.subject)} out of 4 subjects"))
 
 def show_sub(student_obj):
     # print(sys("===== Your Enrolled Subject ======"))
     if not student_obj.subject:
-        print(error("Showing 0 subjects"))
-
-    print(sys(f"Show {len(student_obj.subject)} subjects"))
-    for s in student_obj.subject:
-        print(sys(f"[ Subject::{s.id} -- mark = {s.mark} -- grade = {s.grade:<2} ]"))
+        print(error("\t\tShowing 0 subjects"))
+    else:
+        print(sys(f"\t\tShow {len(student_obj.subject)} subjects"))
+        for s in student_obj.subject:
+            print(sys(f"\t\t[ Subject::{s.id} -- mark = {s.mark} -- grade = {s.grade:<2} ]")) # <2 mean align the letter
 
 def sub_remove(student_obj):
-    print(sys("===== Remove Subject ======"))
+    print(sys("\t\t===== Remove Subject ======"))
     if not student_obj.subject:
-        print(error("You have no subjects to remove"))
+        print(error("\t\tYou have no subjects to remove"))
 
-    print(succ(f"Show {len(student_obj.subject)} subjects"))
+    # print(succ(f"Show {len(student_obj.subject)} subjects"))
     for s in student_obj.subject:
-        print(sys(f"[ Subject::{s.id} -- mark = {s.mark} -- grade = {s.grade} ]"))
+        print(sys(f"\t\t[ Subject::{s.id} -- mark = {s.mark} -- grade = {s.grade} ]"))
 
-    subject_id = input(student("Remove Subject by ID: "))
+    subject_id = input(student("\t\tRemove Subject by ID: "))
     subject_to_remove = None
     for s in student_obj.subject:
         if s.id == subject_id:
@@ -178,23 +218,23 @@ def sub_remove(student_obj):
         student_obj.subject.remove(subject_to_remove)
         student_obj.update_average()
         db.save()
-        print(sys(f"Dropping Subject - {subject_to_remove.id}"))
-        print(sys(f"You are now enrolled in {len(student_obj.subject)} out of 4 subjects"))
+        print(sys(f"\t\tDropping Subject - {subject_to_remove.id}"))
+        print(sys(f"\t\tYou are now enrolled in {len(student_obj.subject)} out of 4 subjects"))
     else:
-        print(error("Subject ID not found. Please check and try again! "))
+        print(error("\t\tSubject ID not found. Please check and try again! "))
 
 def change_pwd(student_obj):
     while True:
-        new_pwd = input(student("Enter new password: "))
-        confirm_pwd = input(student("Confirm Password: "))
+        new_pwd = input(student("\t\tEnter new password: "))
+        confirm_pwd = input(student("\t\tConfirm Password: "))
         if new_pwd == confirm_pwd:
             if re.match(PASSWORD_PATTERN, new_pwd):
                 student_obj.pwd = new_pwd
                 db.save()
-                print(succ("Password changed successfully! "))
+                print(succ("\t\tPassword changed successfully! "))
                 break
             else:
-                print(error("Invalid password format. Password must start with uppercase, have at least 5 letters and 3 digits."))
+                print(error("\t\tInvalid password format. Password must start with uppercase, have at least 5 letters and 3 digits."))
         else:
-            print(error("The password is not match! "))
+            print(error("\t\tPassword does not match - Try again! "))
 

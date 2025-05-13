@@ -15,5 +15,5 @@ def error(text):
 def sys(text):
     return Fore.YELLOW + text
 
-def warn(text):
-    return Fore.LIGHTMAGENTA_EX + text
+def nor(text):
+    return Fore.WHITE+ text
