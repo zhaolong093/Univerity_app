@@ -78,6 +78,7 @@ def rm_student():
             print(error("\tInvalid ID format! Please enter 6-digit number! "))
             continue
         #find student
+        db.students = students
         student_to_remove = next((s for s in db.students if s.id == student_id), None)
         #easy version here:
         # for s in db.students:
