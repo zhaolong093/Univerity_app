@@ -32,7 +32,40 @@ class UniversityApp(tk.Tk):
         self.pwd_entry.pack(pady=5)
 
         tk.Button(self, text="Login", command=self.login_student).pack(pady=10)
+        # tk.Button(self, text="Register", command=self.register_student).pack(pady=10)
 
+    # def register_student(self):
+    #     db.students = db.load()
+    #
+    #     firstname = self.firstname_entry.get().strip().lower()
+    #     lastname = self.lastname_entry.get().strip().lower()
+    #     email = self.email_entry.get().strip().lower()
+    #     pwd = self.pwd_entry.get().strip()
+    #
+    #     if not firstname or not lastname:
+    #         messagebox.showerror("Missing Info", "First name and last name are required.")
+    #         return
+    #
+    #     if not re.match(EMAIL_PATTERN, email):
+    #         messagebox.showerror("Invalid Email", "Email must be in the format: firstname.lastname@university.com")
+    #         return
+    #
+    #     if not re.match(PASSWORD_PATTERN, pwd):
+    #         messagebox.showerror("Invalid Password",
+    #                              "Password must start with a capital letter, have at least 6 letters, and end with at least 3 digits.")
+    #         return
+    #
+    #     if db.get_student_by_email(email):
+    #         messagebox.showerror("Error", "A student with this email already exists.")
+    #         return
+    #
+    #     # Generate new student
+    #     new_student = Student(student_id, firstname, lastname, email, pwd)
+    #     db.students.append(new_student)
+    #     db.save()
+    #
+    #     messagebox.showinfo("Success",
+    #                         f"Student {firstname.capitalize()} {lastname.capitalize()} registered successfully!")
     def login_student(self):
 
         db.load()
@@ -100,6 +133,9 @@ class UniversityApp(tk.Tk):
 if __name__ == "__main__":
     app = UniversityApp()
     app.mainloop()
+
+
+
 # old code
 # import tkinter as tk
 # from models.database import Database
