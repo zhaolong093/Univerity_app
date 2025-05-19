@@ -1,6 +1,7 @@
 import re
 import tkinter as tk
 from tkinter import messagebox
+import random
 
 from models.database import Database
 from models.student import Student
@@ -11,12 +12,20 @@ EMAIL_PATTERN = r'^[a-z]+\.[a-z]+@university\.com$'
 PASSWORD_PATTERN = r'^[A-Z][a-zA-Z]{5,}\d{3,}$'
 
 class UniversityApp(tk.Tk):
+
     def __init__(self):
         super().__init__()
-        self.title("University Enrollment System")
+        self.title("GUIUniApp")
         self.geometry("500x400")
         self.current_student = None
         self.show_login_window()
+
+    def gen_uniq_student_id(self):
+        existing_ids = [s.id for s in db.students]
+        while True:
+            new_id = f"{random.randint(1, 999999):06}"
+            if new_id not in existing_ids:
+                return new_id
 
     def show_login_window(self):
         self.clear_window()
@@ -30,42 +39,13 @@ class UniversityApp(tk.Tk):
         #I can add show = "*" for security
         self.pwd_entry = tk.Entry(self, show="*")
         self.pwd_entry.pack(pady=5)
+        #padx pady, the number of pixel surrounding the widget
+        #pack is they layout manager
 
         tk.Button(self, text="Login", command=self.login_student).pack(pady=10)
         # tk.Button(self, text="Register", command=self.register_student).pack(pady=10)
 
-    # def register_student(self):
-    #     db.students = db.load()
-    #
-    #     firstname = self.firstname_entry.get().strip().lower()
-    #     lastname = self.lastname_entry.get().strip().lower()
-    #     email = self.email_entry.get().strip().lower()
-    #     pwd = self.pwd_entry.get().strip()
-    #
-    #     if not firstname or not lastname:
-    #         messagebox.showerror("Missing Info", "First name and last name are required.")
-    #         return
-    #
-    #     if not re.match(EMAIL_PATTERN, email):
-    #         messagebox.showerror("Invalid Email", "Email must be in the format: firstname.lastname@university.com")
-    #         return
-    #
-    #     if not re.match(PASSWORD_PATTERN, pwd):
-    #         messagebox.showerror("Invalid Password",
-    #                              "Password must start with a capital letter, have at least 6 letters, and end with at least 3 digits.")
-    #         return
-    #
-    #     if db.get_student_by_email(email):
-    #         messagebox.showerror("Error", "A student with this email already exists.")
-    #         return
-    #
-    #     # Generate new student
-    #     new_student = Student(student_id, firstname, lastname, email, pwd)
-    #     db.students.append(new_student)
-    #     db.save()
-    #
-    #     messagebox.showinfo("Success",
-    #                         f"Student {firstname.capitalize()} {lastname.capitalize()} registered successfully!")
+
     def login_student(self):
 
         db.load()
